@@ -3,6 +3,8 @@
 namespace Drupal\itunes_rss\Plugin\views\row;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
+use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\views\Plugin\views\row\RssFields;
 
 /**
@@ -23,7 +25,7 @@ class ItunesRssFields extends RssFields {
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-
+    $options['enclosure_field'] = ['default' => ''];
     foreach ($this->getItunesItemFields() as $field) {
       $options['itunes']['contains'][$this->getItunesFieldMachineName($field)] = ['default' => ''];
     }
@@ -92,6 +94,14 @@ class ItunesRssFields extends RssFields {
     $view_fields_labels = $this->displayHandler->getFieldLabels();
     $view_fields_labels = array_merge($initial_labels, $view_fields_labels);
 
+    $form['enclosure_field'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Enclosure field'),
+      '#description' => $this->t('Describes a media object that is attached to the item. This must be a file field.'),
+      '#options' => $view_fields_labels,
+      '#default_value' => $this->options['enclosure_field'],
+    ];
+
     $form['itunes'] = [
       '#type' => 'details',
       '#title' => $this->t('iTunes fields'),
@@ -123,6 +133,28 @@ class ItunesRssFields extends RssFields {
       $row_index = 0;
     }
     $item = $build['#row'];
+
+    if ($this->options['enclosure_field']) {
+      $field_name = $this->options['enclosure_field'];
+      $entity = $this->view->result[$row_index]->_entity;
+      $enclosure = $entity->$field_name;
+      if ($enclosure instanceof FileFieldItemList) {
+        $value = $enclosure->getValue();
+        $file = File::load($value[0]['target_id']);
+        $item->elements[] = [
+          'key' => 'enclosure',
+          'attributes' => [
+            // In RSS feeds, it is necessary to use absolute URLs. The 'url.site'
+            // cache context is already associated with RSS feed responses, so it
+            // does not need to be specified here.
+            'url' => file_create_url($file->getFileUri()),
+            'length' => $file->getSize(),
+            'type' => $file->getMimeType(),
+          ]
+        ];
+      }
+    }
+
     $fields = $this->getItunesItemFields();
 
     // Render boolean fields as yes/no.
