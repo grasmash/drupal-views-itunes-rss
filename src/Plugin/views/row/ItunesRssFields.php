@@ -62,6 +62,20 @@ class ItunesRssFields extends RssFields {
   }
 
   /**
+   * Returns a list of fields to be rendered as boolean.
+   *
+   * @return array
+   *   An array of fields to be rendered as boolean.
+   */
+  public function getItunesItemBooleanFields() {
+    return [
+      'explicit',
+      'block',
+      'isClosedCaptioned',
+    ];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getItunesFieldMachineName($field) {
@@ -91,7 +105,7 @@ class ItunesRssFields extends RssFields {
       $form['itunes'][$this->getItunesFieldMachineName($field)] = [
         '#type' => 'select',
         '#title' => $this->t('iTunes @field_name field', ['@field_name' => $field]),
-        '#description' => $this->t('iTunes @field_name field.', ['@field_name' => $field]),
+        '#description' => $this->t("The itunes:@field_name field. If set to none, field will not be rendered.", ['@field_name' => $field]),
         '#options' => $view_fields_labels,
         '#default_value' => $this->options['itunes'][$this->getItunesFieldMachineName($field)],
         '#required' => FALSE,
@@ -109,18 +123,23 @@ class ItunesRssFields extends RssFields {
       $row_index = 0;
     }
     $item = $build['#row'];
-
     $fields = $this->getItunesItemFields();
 
-    if ($this->options['itunes'][$this->getItunesFieldMachineName('explicit')]) {
-      $explicit = $this->getField($row_index, $this->options['itunes'][$this->getItunesFieldMachineName('explicit')]);
-      $item->elements[] = [
-        'key' => 'itunes:explicit',
-        'value' => $explicit ? "yes" : "no",
-      ];
-      unset($fields['explicit']);
+    // Render boolean fields as yes/no.
+    foreach ($this->getItunesItemBooleanFields() as $boolean_field) {
+      if ($this->options['itunes'][$this->getItunesFieldMachineName($boolean_field)]) {
+        $explicit = $this->getField($row_index,
+          $this->options['itunes'][$this->getItunesFieldMachineName($boolean_field)]);
+        $item->elements[] = [
+          'key' => 'itunes:' . $boolean_field,
+          'value' => $explicit ? "yes" : "no",
+        ];
+        // Unset so that field is not rendered again later.
+        unset($fields[$boolean_field]);
+      }
     }
 
+    // Render remaining fields.
     foreach ($fields as $field) {
       if ($this->getField($row_index, $this->options['itunes'][$this->getItunesFieldMachineName($field)]) !== '') {
         $value = $this->getField($row_index, $this->options['itunes'][$this->getItunesFieldMachineName($field)]);
