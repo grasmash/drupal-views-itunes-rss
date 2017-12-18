@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function itunes_rss_theme() {
+  $theme_registry['views_view_itunes_rss'] = array (
+    'variables' =>
+      array (
+        'view' => NULL,
+        'options' => NULL,
+        'rows' => NULL,
+        'title' => NULL,
+      ),
+    'path' => 'templates',
+    'includes' =>
+      array (
+        0 => 'core/modules/views/views.theme.inc',
+      ),
+    'template' => 'views-view-itunes-rss',
+  );
+
+  return $theme_registry;
+}
+
+/**
+ * Prepares variables for RSS feed templates.
+ *
+ * Default template: views-view-rss.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - view: A ViewExecutable object.
+ *   - rows: The raw row data.
+ */
+function template_preprocess_views_view_itunes_rss(&$variables) {
+  //   \Drupal::moduleHandler()->loadInclude('views', 'inc', 'views.theme');
+  template_preprocess_views_view_rss($variables);
+
+  $view  = $variables['view'];
+  $items = $variables['rows'];
+  $style = $view->style_plugin;
+
+  // may need to create getCategory() on viewsRss.
+  $variables['itunes_category'] = $style->options['category'];
+
+}
