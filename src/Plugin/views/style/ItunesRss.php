@@ -3,7 +3,6 @@
 namespace Drupal\itunes_rss\Plugin\views\style;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\views\Plugin\views\style\Rss;
 
 /**
@@ -142,4 +141,5 @@ class ItunesRss extends Rss {
 
     return $build;
   }
+
 }

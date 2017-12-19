@@ -4,4 +4,4 @@ description: iTunes RSS
 core: 8.x
 package: Custom
 dependencies:
-  - views
+  - drupal:views

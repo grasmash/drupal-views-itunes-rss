@@ -1,16 +1,21 @@
 <?php
 
 /**
+ * @file
+ * Provides iTunes RSS feed via views.
+ */
+
+/**
  * Implements hook_theme().
  */
 function itunes_rss_theme() {
   $theme_registry['views_view_itunes_rss'] = [
     'variables' => [
-        'view' => NULL,
-        'options' => NULL,
-        'rows' => NULL,
-        'title' => NULL,
-      ],
+      'view' => NULL,
+      'options' => NULL,
+      'rows' => NULL,
+      'title' => NULL,
+    ],
     'path' => 'templates',
     'includes' => ['core/modules/views/views.theme.inc'],
     'template' => 'views-view-itunes-rss',
@@ -28,11 +33,10 @@ function itunes_rss_theme() {
  *   - view: A ViewExecutable object.
  *   - rows: The raw row data.
  */
-function template_preprocess_views_view_itunes_rss(&$variables) {
+function template_preprocess_views_view_itunes_rss(array &$variables) {
   template_preprocess_views_view_rss($variables);
 
-  $view  = $variables['view'];
-  $items = $variables['rows'];
+  $view = $variables['view'];
   $style = $view->style_plugin;
   $variables['image_url'] = $style->getImage();
   $variables['itunes_category'] = $style->options['category'];
