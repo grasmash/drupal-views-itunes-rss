@@ -4,22 +4,17 @@
  * Implements hook_theme().
  */
 function itunes_rss_theme() {
-  $theme_registry['views_view_itunes_rss'] = array (
-    'variables' =>
-      array (
+  $theme_registry['views_view_itunes_rss'] = [
+    'variables' => [
         'view' => NULL,
         'options' => NULL,
         'rows' => NULL,
         'title' => NULL,
-      ),
+      ],
     'path' => 'templates',
-    'includes' =>
-      array (
-        0 => 'core/modules/views/views.theme.inc',
-      ),
+    'includes' => ['core/modules/views/views.theme.inc'],
     'template' => 'views-view-itunes-rss',
-  );
-
+  ];
   return $theme_registry;
 }
 
@@ -41,4 +36,7 @@ function template_preprocess_views_view_itunes_rss(&$variables) {
   $style = $view->style_plugin;
   $variables['image_url'] = $style->getImage();
   $variables['itunes_category'] = $style->options['category'];
+  $variables['itunes_explicit'] = $style->options['explicit'] ? 'yes' : 'no';
+  $variables['itunes_name'] = $style->options['name'];
+  $variables['itunes_email'] = $style->options['email'];
 }

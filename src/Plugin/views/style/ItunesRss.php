@@ -32,7 +32,8 @@ class ItunesRss extends Rss {
   public function getItunesChannelFields() {
     $fields = [
       'type',
-      'owner',
+      'name',
+      'email',
       'author',
       'subtitle',
       'summary',
@@ -53,6 +54,11 @@ class ItunesRss extends Rss {
   protected function defineOptions() {
     $options = parent::defineOptions();
     $options['image'] = ['default' => ''];
+    $options['name'] = ['default' => ''];
+    $options['email'] = ['default' => ''];
+    $options['category'] = ['default' => ''];
+    $options['sub_category'] = ['default' => ''];
+    $options['explicit'] = ['default' => ''];
 
     return $options;
   }
@@ -74,6 +80,20 @@ class ItunesRss extends Rss {
       '#description' => $this->t('This will appear in the RSS feed itself.'),
       '#maxlength' => 1024,
     ];
+    $form['name'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Owner name.'),
+      '#default_value' => $this->options['name'],
+      '#description' => $this->t('This will appear in the RSS feed itself.'),
+      '#maxlength' => 1024,
+    ];
+    $form['email'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Owner email.'),
+      '#default_value' => $this->options['email'],
+      '#description' => $this->t('This will appear in the RSS feed itself.'),
+      '#maxlength' => 1024,
+    ];
     $form['category'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Category'),
@@ -87,6 +107,12 @@ class ItunesRss extends Rss {
       '#default_value' => $this->options['sub_category'],
       '#description' => $this->t('This will appear in the RSS feed itself.'),
       '#maxlength' => 1024,
+    ];
+    $form['explicit'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Explicit'),
+      '#default_value' => $this->options['explicit'],
+      '#description' => $this->t('This will appear in the RSS feed itself.'),
     ];
   }
 
@@ -110,7 +136,8 @@ class ItunesRss extends Rss {
 
     $this->namespaces = [
       'xmlns:itunes' => 'http://www.itunes.com/dtds/podcast-1.0.dtd',
-      'version' => '2.0',
+      'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+      'xmlns:atom' => 'http://www.w3.org/2005/Atom',
     ];
 
     return $build;

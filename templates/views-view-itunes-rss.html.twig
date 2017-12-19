@@ -22,6 +22,7 @@
   <channel>
     <title>{{ title }}</title>
     <link>{{ link }}</link>
+    <atom:link href="{{ link }}" rel="self" type="application/rss+xml"/>
     <description>{{ description }}</description>
     <language>{{ langcode }}</language>
     {% if image_url %}
@@ -38,6 +39,13 @@
         {% endif %}
       </itunes:category>
     {% endif %}
+    {% if itunes_name and itunes_email %}
+      <itunes:owner>
+        <itunes:name>{{ itunes_name }}</itunes:name>
+        <itunes:email>{{ itunes_email }}</itunes:email>
+      </itunes:owner>
+    {% endif %}
+    <itunes:explicit>{{ itunes_explicit }}</itunes:explicit>
     {{ channel_elements }}
     {{ items }}
   </channel>
