@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\views\Plugin\views\row\RssFields;
+use function strtolower;
 
 /**
  * Renders an iTunes RSS item based on fields.
@@ -61,20 +62,6 @@ class ItunesRssFields extends RssFields {
     ];
 
     return $fields;
-  }
-
-  /**
-   * Returns a list of fields to be rendered as boolean.
-   *
-   * @return array
-   *   An array of fields to be rendered as boolean.
-   */
-  public function getItunesItemBooleanFields() {
-    return [
-      'explicit',
-      'block',
-      'isClosedCaptioned',
-    ];
   }
 
   /**
@@ -156,20 +143,6 @@ class ItunesRssFields extends RssFields {
     }
 
     $fields = $this->getItunesItemFields();
-
-    // Render boolean fields as yes/no.
-    foreach ($this->getItunesItemBooleanFields() as $boolean_field) {
-      if ($this->options['itunes'][$this->getItunesFieldMachineName($boolean_field)]) {
-        $explicit = $this->getField($row_index,
-          $this->options['itunes'][$this->getItunesFieldMachineName($boolean_field)]);
-        $item->elements[] = [
-          'key' => 'itunes:' . $boolean_field,
-          'value' => $explicit ? "yes" : "no",
-        ];
-        // Unset so that field is not rendered again later.
-        unset($fields[$boolean_field]);
-      }
-    }
 
     // Render remaining fields.
     foreach ($fields as $field) {
